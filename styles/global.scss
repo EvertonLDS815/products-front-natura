@@ -1,0 +1,41 @@
+
+
+:root {
+    --background-body: #402f3a;
+    --white: #fff;
+    --black: #000;
+    --gray: #bbb;
+    --primary-light: #60ffc3;
+    --dark-600: #613851;
+    --mar-800: #643843;
+    --mar-700: #563d4c;
+    --mar-500: #C88EA7;
+    --mar-300: #E7CBCB;
+
+    --dark-900: #2d232a;
+    --dark-600: #493643;
+    --des-green: #3fffa3;
+    --des-red: #b93535;
+    --des-red-light: #fc4747;
+
+    --button-enter: #02a953;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+}
+body {
+    background: var(--background-body);
+    font-family: sans-serif;
+    color: var(--white);
+    font-size: 1rem;
+}
+a {
+    text-decoration: none;
+}
+button {
+    cursor: pointer;
+}

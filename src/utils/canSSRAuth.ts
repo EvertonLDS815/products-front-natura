@@ -1,0 +1,42 @@
+import {
+    GetServerSideProps,
+    GetServerSidePropsContext,
+    GetServerSidePropsResult,
+  } from 'next';
+  
+  import { parseCookies } from 'nookies';
+  import { AuthTokenError } from '../services/errors/AuthTokenError';
+  
+  // função para páginas só users logados terá acesso
+  export function canSSRAuth<P extends { [key: string]: any }>(
+    fn: GetServerSideProps<P>
+  ) {
+    return async (
+      ctx: GetServerSidePropsContext
+    ): Promise<GetServerSidePropsResult<P>> => {
+      const cookies = parseCookies(ctx);
+  
+      const token = cookies['@nextauthtwo.token'];
+  
+      if (!token) {
+        return {
+          redirect: {
+            destination: '/',
+            permanent: false,
+          },
+        };
+      }
+  
+      try {
+        return await fn(ctx);
+      } catch (err) {
+        return {
+          redirect: {
+            destination: '/',
+            permanent: false,
+          },
+        };
+      }
+    };
+  }
+  
