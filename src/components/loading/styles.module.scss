@@ -1,0 +1,22 @@
+.container {
+    margin-top: 2rem;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading {
+    animation: 1s linear infinite spin;
+    font-size: 2rem;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

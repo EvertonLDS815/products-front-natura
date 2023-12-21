@@ -17,3 +17,36 @@
     border-radius: 0.3rem;
     font-size: 1rem;
 }
+
+.productContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-top: 2rem;
+    color: var(--white);
+
+    img {
+        width: 100%;
+        border-radius: 0.3rem;
+    }
+}
+
+.descriptionProduct {
+    position: relative;
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    button {
+        font-size: 1.3rem;
+        border: none;
+        background: var(--dark-900);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        position: absolute;
+        top: 1.4rem;
+        right: 0;
+    }
+}
