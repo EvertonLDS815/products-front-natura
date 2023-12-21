@@ -15,7 +15,7 @@ import {AuthContext} from '../contexts/AuthContext';
 export default function Home() {
   const {signIn} = useContext(AuthContext);
 
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
   const [loading, setLoading] = useState(false);
@@ -24,14 +24,14 @@ export default function Home() {
     event.preventDefault();
 
     try {
-      if (email === '' || password === '') {
+      if (login === '' || password === '') {
         throw new Error('Preencha todos os dados!');
       }
   
       setLoading(true);
       
       const data = {
-        email,
+        login,
         password
       }
       await signIn(data);
@@ -56,8 +56,8 @@ export default function Home() {
             <Input 
               type="text" 
               placeholder={'Digite seu email...'} 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
             />
             <Input 
               type="password" 

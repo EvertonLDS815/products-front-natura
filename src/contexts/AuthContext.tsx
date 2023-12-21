@@ -16,17 +16,17 @@ type AuthContextData = {
 type UserProps = {
     id: string;
     name: string;
-    email: string;
+    login: string;
 }
 
 type SignInProps = {
-    email: string;
+    login: string;
     password: string;
 }
 
 type SignUpProps = {
     name: string;
-    email: string;
+    login: string;
     password: string;
 }
 type AuthProviderProps = {
@@ -54,12 +54,12 @@ export function AuthProvider({children}: AuthProviderProps) {
 
         if (token) {
             api.get('/me/client').then(response => {
-                const {id, name, email} = response.data;
+                const {id, name, login} = response.data;
 
                 setUser({
                     id,
                     name,
-                    email
+                    login
                 });
             })
             .catch((err) => {
@@ -70,10 +70,10 @@ export function AuthProvider({children}: AuthProviderProps) {
     }, [])
     
     
-    async function signIn({email, password}: SignInProps) {
+    async function signIn({login, password}: SignInProps) {
         try {
             const response = await api.post('/session/client', {
-                email,
+                login,
                 password
             });
 
@@ -87,7 +87,7 @@ export function AuthProvider({children}: AuthProviderProps) {
             setUser({
                 id,
                 name,
-                email
+                login
             });
 
             api.defaults.headers['Authorization'] = `Bearer ${token}`
@@ -101,11 +101,11 @@ export function AuthProvider({children}: AuthProviderProps) {
         }
     }
 
-    async function signUp({name, email, password}: SignUpProps) {
+    async function signUp({name, login, password}: SignUpProps) {
         try {
             const response = await api.post('/client', {
                 name,
-                email,
+                login,
                 password
             });
 

@@ -4,10 +4,11 @@ import {Header} from '@/components/Header/index';
 import styles from './styles.module.scss';
 import {FiRefreshCcw} from 'react-icons/fi';
 import { setUpAPIClient } from '@/services/api';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import formatCurrency from '@/utils/formatCurrency';
 import {Loading} from '../../components/loading';
+import { AuthContext } from '@/contexts/AuthContext';
 
 type ProductItemProps = {
     id: string;
@@ -33,7 +34,6 @@ export default function Dashboard({categoryList}: CategoryProps) {
     const [categories, setCategories] = useState(categoryList || []);
     const [categorySelected, setCategorySelected] = useState(0);
     const [loading, setLoading] = useState(true);
-    
     
     async function byCategory(id: string) {
         const apiClient = setUpAPIClient();
