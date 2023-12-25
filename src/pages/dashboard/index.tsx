@@ -9,6 +9,7 @@ import Link from 'next/link';
 import formatCurrency from '@/utils/formatCurrency';
 import {Loading} from '../../components/loading';
 import { AuthContext } from '@/contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 type ProductItemProps = {
     id: string;
@@ -57,6 +58,44 @@ export default function Dashboard({categoryList}: CategoryProps) {
         byCategory(categories[categorySelected].id)
     }, [])
     
+
+    async function handleAdd(id: string) {
+        const api = setUpAPIClient();
+
+        const {data: lastOrder} = await api.get('/order/item');
+        const {data: res} = await api.post('/order/add', {
+            order_id: lastOrder.id,
+            product_id: id,
+            amount: 2,
+        });
+
+        console.log(res);
+    }
+
+    async function handleCreateOrder() {
+        toast.info("Crie seu Pedido");
+        const api = setUpAPIClient();
+
+        await api.post('/order', {
+            neighborhood: "Vilinha",
+            adress: "Rua Feitosa",
+            house_number: "00"
+        })
+    }
+
+    async function handleSendOrder() {
+        const api = setUpAPIClient();
+
+        
+        const {data} = await api.get(('/order/item'));
+
+
+        await api.patch('/order/send', {
+            order_id: data.id
+        })
+
+        toast.success("Pedido Enviado!");
+    }
     return (
         <>
             <Head>
@@ -86,11 +125,14 @@ export default function Dashboard({categoryList}: CategoryProps) {
                             <div className={styles.descriptionProduct}>
                                 <h2>{item.name}</h2>
                                 <p>{formatCurrency(parseFloat(item.price))}</p>
-                                <button>+</button>
+                                <button onClick={() => handleAdd(item.id)}>+</button>
                             </div>
                         </div>
                     ))}
                 </section>}
+
+                <button onClick={handleSendOrder}>Enviar</button>
+                <button onClick={handleCreateOrder}>Criar pedido</button>
                 
             </main>
         </>
