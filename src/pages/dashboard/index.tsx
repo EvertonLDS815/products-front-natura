@@ -4,7 +4,7 @@ import {Header} from '@/components/Header/index';
 import styles from './styles.module.scss';
 import {FiRefreshCcw} from 'react-icons/fi';
 import { setUpAPIClient } from '@/services/api';
-import { useContext, useEffect, useState } from 'react';
+import { FormEvent, useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import formatCurrency from '@/utils/formatCurrency';
 import {Loading} from '../../components/loading';
@@ -35,6 +35,11 @@ export default function Dashboard({categoryList}: CategoryProps) {
     const [categories, setCategories] = useState(categoryList || []);
     const [categorySelected, setCategorySelected] = useState(0);
     const [loading, setLoading] = useState(true);
+
+    const [neigh, setNeigh] = useState('');
+    const [adress, setAdress] = useState('');
+    const [number, setNumber] = useState('');
+    const [amount, setAmount] = useState(1);
     
     async function byCategory(id: string) {
         const apiClient = setUpAPIClient();
@@ -59,27 +64,42 @@ export default function Dashboard({categoryList}: CategoryProps) {
     }, [])
     
 
-    async function handleAdd(id: string) {
+    async function handleAdd(event: FormEvent, id: string) {
+        event.preventDefault();
+        
+        if (amount === 0) {
+            return
+        }
         const api = setUpAPIClient();
 
         const {data: lastOrder} = await api.get('/order/item');
+        if (!lastOrder) {
+            return toast.info("Crie seu pedido primeiro!");
+        }
         const {data: res} = await api.post('/order/add', {
             order_id: lastOrder.id,
             product_id: id,
-            amount: 2,
+            amount
         });
 
         console.log(res);
     }
 
-    async function handleCreateOrder() {
+    async function handleCreateOrder(event: FormEvent) {
+        event.preventDefault();
+
+        if (neigh === '' || adress === '' || number === '') {
+            toast.error("Digite todos os campos");
+            return;
+        }
+
         toast.info("Crie seu Pedido");
         const api = setUpAPIClient();
 
         await api.post('/order', {
-            neighborhood: "Vilinha",
-            adress: "Rua Feitosa",
-            house_number: "00"
+            neighborhood: neigh,
+            adress,
+            house_number: number
         })
     }
 
@@ -115,7 +135,7 @@ export default function Dashboard({categoryList}: CategoryProps) {
                 {loading === true ? <Loading /> :
                 <section className={styles.productContainer}>
                     {loading === false && products.map((item: ProductItemProps) => (
-                        <div key={item.id}>
+                        <div className={styles.content} key={item.id}>
                             <Link href={`http://localhost:2222/files/${item.banner}`} title={item.name} target="_blank">
                                 <img 
                                 src={`http://localhost:2222/files/${item.banner}`}
@@ -125,14 +145,39 @@ export default function Dashboard({categoryList}: CategoryProps) {
                             <div className={styles.descriptionProduct}>
                                 <h2>{item.name}</h2>
                                 <p>{formatCurrency(parseFloat(item.price))}</p>
-                                <button onClick={() => handleAdd(item.id)}>+</button>
+                                <form onSubmit={(event) => handleAdd(event, item.id)}>
+                                    <input
+                                    type="number"
+                                    min={1}
+                                    onChange={(event) => setAmount(Number(event.target.value))}
+                                    />
+                                    <button type="submit">+</button>
+                                </form>
                             </div>
                         </div>
                     ))}
                 </section>}
 
-                <button onClick={handleSendOrder}>Enviar</button>
-                <button onClick={handleCreateOrder}>Criar pedido</button>
+                <form onSubmit={handleCreateOrder}>
+                    <br /><label>Bairro:</label><br />
+                    <input
+                        value={neigh}
+                        onChange={(event) => setNeigh(event.target.value)}
+                        placeholder="São Cristóvão" />
+                    
+                    <br /><label>Rua:</label><br />
+                    <input
+                        value={adress}
+                        onChange={(event) => setAdress(event.target.value)}
+                        placeholder="Manoel gonçalves" />
+                    
+                    <br /><label>Número:</label><br />
+                    <input
+                        value={number}
+                        onChange={(event) => setNumber(event.target.value)}
+                        placeholder="22" />
+                    <button type="submit">Criar pedido</button>
+                </form>
                 
             </main>
         </>

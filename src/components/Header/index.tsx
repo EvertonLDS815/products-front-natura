@@ -13,7 +13,7 @@ export function Header() {
 
 
     return (
-        <header style={param === '/dashboard' ? {zIndex: '0'}: {zIndex: '5'}} className={styles.headerContainer}>
+        <header style={param === '/orders' ? {zIndex: '0'}: {zIndex: '5'}} className={styles.headerContainer}>
             <div className={styles.headerContent}>
                 <Link href="/dashboard">
                     <img src="/logo-jl-2.png" width={200} />

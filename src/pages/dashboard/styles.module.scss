@@ -33,20 +33,47 @@
 
 .descriptionProduct {
     position: relative;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     h2 {
         font-size: 1.1rem;
+        margin-top: 5px;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    form {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        bottom: 0;
+    }
+
+    input {
+        background: var(--dark-600);
+        color: var(--white);
+        bottom: 0;
+        width: 40%;
+        padding: 6px;
+        border-radius: 0.4rem;
+        border: 1px solid var(--gray);
     }
 
     button {
         font-size: 1.3rem;
         border: none;
-        background: var(--dark-900);
+        background: var(--button-enter);
         color: white;
-        width: 30px;
+        width: 30%;
         height: 30px;
-        border-radius: 50%;
-        position: absolute;
-        top: 1.4rem;
+        border-radius: 0.3rem;
+        bottom: 0;
         right: 0;
     }
 }

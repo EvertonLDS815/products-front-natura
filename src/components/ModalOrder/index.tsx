@@ -1,21 +1,25 @@
 import Modal from 'react-modal';
 import styles from './styles.module.scss';
-import {OrderItemProps} from '../../pages/dashboard';
+import {ItemProps} from '../../pages/orders';
 import {FiX} from 'react-icons/fi';
 import Link from 'next/link';
 import { setUpAPIClient } from '@/services/api';
 import formatCurrency from '@/utils/formatCurrency';
+import { useContext } from 'react';
+import { AuthContext } from '@/contexts/AuthContext';
 
 interface ModalOrderProps {
     isOpen: boolean;
     onRequestClose: () => void;
-    order: OrderItemProps[];
+    order: ItemProps[];
     onFinished: (id: string) => void
 }
 export function ModalOrder({isOpen, onRequestClose, order, onFinished}: ModalOrderProps) {
-    if (order === undefined) {
+    if (order.length === 0) {
         return
     }
+
+    const {user} = useContext(AuthContext);
     const customStyles = {
         content: {
             top: '50%',
@@ -57,15 +61,15 @@ export function ModalOrder({isOpen, onRequestClose, order, onFinished}: ModalOrd
 
                     <div className={styles.headModal}>
                         <h3 className={styles.name}>
-                            {order[0].order.client.name}
+                            {user?.name}
                         </h3>
                         <span>{order.length} {order.length > 1 ? 'itens' : 'item'}</span>
                     </div>
                     <div className={styles.headModal}>
                         <span>
-                            {order[0].order.adress}
+                        {order[0]?.order.neighborhood}
                         </span>
-                        <span>Nº {order[0].order.house_number}</span>
+                        <span>Nº {order[0]?.order.house_number}</span>
                     </div>
                     <div className={order.length >= 4 ? styles.scrollY : styles.top}>
                         {order.map(item => (
