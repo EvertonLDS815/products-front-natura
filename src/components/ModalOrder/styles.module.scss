@@ -73,11 +73,16 @@
     }
 }
 
-.description {
-    margin-top: 0.1rem;
-    word-break: break-all;
-}
+// .description {
+//     margin-top: 0.1rem;
+//     word-break: break-all;
+// }
 
+.buttonRemove {
+    background: none;
+    border: none;
+    padding: none;
+}
 .footerModal {
     display: flex;
     align-items: center;
@@ -107,7 +112,6 @@
 .name {
     color: var(--des-green);
 }
-
 
 @media (max-width: 550px) {
     .container {

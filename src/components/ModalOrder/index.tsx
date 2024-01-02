@@ -5,19 +5,23 @@ import {FiX} from 'react-icons/fi';
 import Link from 'next/link';
 import { setUpAPIClient } from '@/services/api';
 import formatCurrency from '@/utils/formatCurrency';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
+import { FaTrash } from "react-icons/fa";
+
 
 interface ModalOrderProps {
     isOpen: boolean;
     onRequestClose: () => void;
     order: ItemProps[];
-    onFinished: (id: string) => void
+    onDeleteOrder: (id: string) => void
 }
-export function ModalOrder({isOpen, onRequestClose, order, onFinished}: ModalOrderProps) {
+export function ModalOrder({isOpen, onRequestClose, order, onDeleteOrder}: ModalOrderProps) {
     if (order.length === 0) {
         return
     }
+    
+    const [orderList, setOrderList] = useState(order || []);
 
     const {user} = useContext(AuthContext);
     const customStyles = {
@@ -35,9 +39,27 @@ export function ModalOrder({isOpen, onRequestClose, order, onFinished}: ModalOrd
     }
     const baseURL = "http://localhost:2222/files/";
 
-    const total = order.reduce((acc, {product, amount}) => {
+    const total = orderList.reduce((acc, {product, amount}) => {
         return acc + (parseFloat(product.price) * amount)
-    }, 0)
+    }, 0);
+
+    async function handleDeleteItem(id: string) {
+        const api = setUpAPIClient();
+
+        await api.delete('/order/remove', {
+            params: {
+                item_id: id
+            }
+        });
+        
+
+        setOrderList((prevState) => prevState.filter((order) => order.id !== id));
+
+    }
+    
+    if (orderList.length === 0) {
+        onRequestClose();
+    }
 
     return (
         <Modal
@@ -63,16 +85,16 @@ export function ModalOrder({isOpen, onRequestClose, order, onFinished}: ModalOrd
                         <h3 className={styles.name}>
                             {user?.name}
                         </h3>
-                        <span>{order.length} {order.length > 1 ? 'itens' : 'item'}</span>
+                        <span>{orderList.length} {orderList.length > 1 ? 'itens' : 'item'}</span>
                     </div>
                     <div className={styles.headModal}>
                         <span>
-                        {order[0]?.order.neighborhood}
+                        {orderList[0]?.order.neighborhood}
                         </span>
-                        <span>Nº {order[0]?.order.house_number}</span>
+                        <span>Nº {orderList[0]?.order.house_number}</span>
                     </div>
-                    <div className={order.length >= 4 ? styles.scrollY : styles.top}>
-                        {order.map(item => (
+                    <div className={orderList.length >= 4 ? styles.scrollY : styles.top}>
+                        {orderList.map(item => (
                             <section key={item.id} className={styles.containerItem}>
                                 <div className={styles.flexItem}>
                                     <Link title={item.product.name} href={`${baseURL}${item.product.banner}`} target="_blank">
@@ -80,13 +102,16 @@ export function ModalOrder({isOpen, onRequestClose, order, onFinished}: ModalOrd
                                     </Link>
                                     <span className={styles.desProduct}>{item.amount} x <strong>{item.product.name}</strong></span>
                                     <span>{formatCurrency(Number(item.product.price))}</span>
+                                    <button className={styles.buttonRemove} onClick={() => handleDeleteItem(item.id)}>
+                                        <FaTrash size={18} color="#ef4646" />
+                                    </button>
                                 </div>
                             </section>
                         ))}
                     </div>
                     <div className={styles.footerModal}>
-                        <button className={styles.buttonOrder} onClick={() => onFinished(order[0].order_id)}>
-                            Cancelar Pedido
+                        <button className={styles.buttonOrder} onClick={() => onDeleteOrder(order[0].order_id)}>
+                            Deletar Pedido
                         </button>
                         <h2>Total: {formatCurrency(total)}</h2>
                     </div>

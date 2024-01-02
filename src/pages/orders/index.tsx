@@ -71,6 +71,18 @@ export default function Order({orders, items}: HomeProps) {
 
         setOrderList((prevState) => prevState.filter((order) => order.id !== id));
         toast.success('Pedido deletado!')
+
+        setModalVisible(false);
+    }
+
+    async function handleContinue(order_id: string) {
+        const api = setUpAPIClient();
+
+        const order = await api.post('/get/order', {
+            id: order_id
+        });
+
+        return order
     }
 
     async function handleSend(id: string) {
@@ -126,6 +138,7 @@ export default function Order({orders, items}: HomeProps) {
                                 </button>
                                         <span onClick={() => handleDelete(order.id)}>Deletar</span>
                                         <span onClick={() => handleSend(order.id)}>Enviar</span>
+                                        <span onClick={() => handleContinue(order.id)}>Continuar</span>
                             </section>
                         ))}
 
@@ -136,7 +149,7 @@ export default function Order({orders, items}: HomeProps) {
                 isOpen={modalVisible}
                 onRequestClose={handleCloseModal}
                 order={modalItem}
-                onFinished={handleSend}
+                onDeleteOrder={handleDelete}
                 />
             )}
         </>
@@ -150,6 +163,8 @@ export const getServerSideProps = canSSRAuth(async (ctx: any) => {
         const {data: order} = await apiClient.post('/order/client', {
             client_id: detail.id
         });
+        
+        console.log(order.id)
         
         const {data: lastOrder} = await apiClient.get('/order/item');
 

@@ -7,7 +7,7 @@ import { setUpAPIClient } from '@/services/api';
 import { FormEvent, useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import formatCurrency from '@/utils/formatCurrency';
-import {Loading} from '../../components/loading';
+import {Loading} from '../../../components/loading';
 import { AuthContext } from '@/contexts/AuthContext';
 import { toast } from 'react-toastify';
 import Router from 'next/router';
@@ -52,18 +52,16 @@ export default function Dashboard({categoryList}: CategoryProps) {
 
             setProducts(response.data);
             setLoading(false);
-        }
-    
-        async function handleChangeCategory(event: any) {
+    }
+    async function handleChangeCategory(event: any) {
         setCategorySelected(event.target.value)
         
         byCategory(categories[event.target.value].id)
     }
-    // recarregando a page
+        // recarregando a page
     useEffect(() => {
         byCategory(categories[categorySelected].id)
     }, [])
-    
 
     async function handleAdd(event: FormEvent, id: string) {
         event.preventDefault();
@@ -71,11 +69,12 @@ export default function Dashboard({categoryList}: CategoryProps) {
         if (amount === 0) {
             return
         }
-        const api = setUpAPIClient();
 
+        const api = setUpAPIClient();
+        
         const {data: lastOrder} = await api.get('/order/item');
         if (!lastOrder) {
-            Router.push('/orders')
+            Router.push('/dashboard');
             return toast.info("Crie seu pedido primeiro!");
         }
         const {data: res} = await api.post('/order/add', {
@@ -83,6 +82,8 @@ export default function Dashboard({categoryList}: CategoryProps) {
             product_id: id,
             amount
         });
+
+        setAmount(1)
 
         console.log(res);
     }
@@ -95,7 +96,7 @@ export default function Dashboard({categoryList}: CategoryProps) {
             return;
         }
 
-        toast.info("Crie seu Pedido");
+        toast.info("Adicione Itens");
         const api = setUpAPIClient();
 
         await api.post('/order', {
@@ -106,6 +107,20 @@ export default function Dashboard({categoryList}: CategoryProps) {
 
         Router.push('/dashboard/order');
     }
+
+    async function handleSendOrder() {
+        const api = setUpAPIClient();
+
+        
+        const {data} = await api.get(('/order/item'));
+
+
+        await api.patch('/order/send', {
+            order_id: data.id
+        })
+
+        toast.success("Pedido Enviado!");
+    }
     return (
         <>
             <Head>
@@ -113,35 +128,44 @@ export default function Dashboard({categoryList}: CategoryProps) {
             </Head>
             <Header />
             <main className={styles.container}>
-
-                <form className={styles.formOrder} onSubmit={handleCreateOrder}>
-                    <h1>Cadastro do pedido</h1>
-                    <label>Bairro:</label>
-                    <input
-                        value={neigh}
-                        onChange={(event) => setNeigh(event.target.value)}
-                        placeholder="São Cristóvão" />
-                    
-                    <section>
-                        <div>
-                            <label>Rua:</label>
-                            <input
-                                value={adress}
-                                onChange={(event) => setAdress(event.target.value)}
-                                placeholder="Manoel gonçalves" />
-                            
-                        </div>
-                        <div>
-                            <label>Número:</label>
-                            <input
-                                value={number}
-                                onChange={(event) => setNumber(event.target.value)}
-                                placeholder="22" />
-                        </div>
-                    </section>
-                    <button type="submit">Criar pedido</button>
-                </form>
                 
+            <h1>Produtos</h1>
+
+            <select className={styles.select} value={categorySelected} onChange={handleChangeCategory}>
+                {categories.map((item, index) => (
+                    <option key={item.id} value={index}>
+                        {item.name}
+                    </option>
+                ))}
+            </select>
+            {loading === true ? <Loading /> :
+            <section className={styles.productContainer}>
+                {loading === false && products.map((product: ProductItemProps, index) => (
+                    <div className={styles.content} key={product.id}>
+                        <Link href={`http://localhost:2222/files/${product.banner}`} title={product.name} target="_blank">
+                            <img 
+                            src={`http://localhost:2222/files/${product.banner}`}
+                            alt={product.name}
+                            />
+                        </Link>
+                        <div className={styles.descriptionProduct}>
+                            <h2>{product.name}</h2>
+                            <p>{formatCurrency(parseFloat(product.price))}</p>
+                            <form onSubmit={(event) => handleAdd(event, product.id)}>
+                                <input
+                                type="number"
+                                min={1}
+                                id={product.id}
+                                onChange={(event) => setAmount(Number(event.target.value))}
+                                />
+                                <button type="submit">+</button>
+                            </form>
+                        </div>
+                    </div>
+                ))}
+
+            </section>}
+                <span onClick={() => handleSendOrder()}>Enviar</span>
             </main>
         </>
     )
