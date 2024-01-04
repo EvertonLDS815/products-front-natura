@@ -7,8 +7,9 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
 import Modal from 'react-modal';
 import {ModalOrder} from '@/components/ModalOrder';
+import Router from "next/router";
 
-type OrderProps = {
+export type OrderProps = {
     id: string;
     neighborhood: string;
     adress: string;
@@ -81,6 +82,8 @@ export default function Order({orders, items}: HomeProps) {
         const order = await api.post('/get/order', {
             id: order_id
         });
+
+        Router.push('/dashboard/order');
 
         return order
     }
