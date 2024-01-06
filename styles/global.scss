@@ -40,6 +40,22 @@ button {
     cursor: pointer;
 }
 
+body::-webkit-scrollbar {
+    width: 8px;               /* width of the entire scrollbar */
+}
+  
+body::-webkit-scrollbar-track {
+    position: fixed;        /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: var(--dark-900);
+}
+
+body, input, textarea, select, button {
+    font: 400 1rem sans-serif;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */

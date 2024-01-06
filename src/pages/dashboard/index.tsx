@@ -13,6 +13,9 @@ import {ItemProps, OrderProps} from '../orders/index';
 import Modal from 'react-modal';
 import { ModalOrder } from '@/components/ModalOrder';
 import {ModalForm} from "@/components/ModalForm";
+import { IoMdSend } from "react-icons/io";
+import { FaTrash } from 'react-icons/fa';
+
 
 type ProductItemProps = {
     id: string;
@@ -238,14 +241,16 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
                         )}
                         {orderList.map((order) => (
                             <section className={styles.orderItem} key={order.id}>
-                                <button  onClick={() => handleOpenModalView(order.id)}>
+                                <button onClick={() => handleOpenModalView(order.id)}>
                                     <div className={styles.tag}></div>
                                     <p>{order.client.name} - <span>{order.neighborhood}</span></p>
                                     <div className={styles.orderPatch}>
                                     </div>
                                 </button>
-                                        <span onClick={() => handleDelete(order.id)}>Deletar</span>
-                                        <span onClick={() => handleSend(order.id)}>Enviar</span>
+                                <div className={styles.orderIcons}>
+                                    <span onClick={() => handleDelete(order.id)}><FaTrash color="#fc4747" size={22} /></span>
+                                    <span onClick={() => handleSend(order.id)}><IoMdSend size={26} color="#02a953" /></span>
+                                </div>
                             </section>
                         ))}
 

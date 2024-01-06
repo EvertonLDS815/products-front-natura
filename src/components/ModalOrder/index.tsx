@@ -102,9 +102,11 @@ export function ModalOrder({isOpen, onRequestClose, order, onDeleteOrder}: Modal
                                     </Link>
                                     <span className={styles.desProduct}>{item.amount} x <strong>{item.product.name}</strong></span>
                                     <span>{formatCurrency(Number(item.product.price))}</span>
-                                    <button className={styles.buttonRemove} onClick={() => handleDeleteItem(item.id)}>
-                                        <FaTrash size={18} color="#ef4646" />
-                                    </button>
+                                    {item.order.draft && (
+                                        <button className={styles.buttonRemove} onClick={() => handleDeleteItem(item.id)}>
+                                            <FaTrash size={18} color="#ef4646" />
+                                        </button>
+                                    )}
                                 </div>
                             </section>
                         ))}

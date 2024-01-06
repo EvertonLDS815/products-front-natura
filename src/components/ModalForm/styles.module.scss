@@ -29,8 +29,15 @@
         background-color: var(--button-enter);
         color: white;
         padding: 0.5rem;
-        border: 1px solid var(--gray);
+        border: none;
         border-radius: 0.3rem;
+
+        &:hover{
+            filter: brightness(1.1);
+        }
+        &:active{
+            filter: brightness(1.2);
+        }
     }
 }
 

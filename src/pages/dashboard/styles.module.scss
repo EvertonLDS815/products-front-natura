@@ -52,6 +52,7 @@
         justify-content: space-between;
         align-items: flex-end;
         bottom: 0;
+        height: 25px;
     }
 
     input {
@@ -69,11 +70,10 @@
         border: none;
         background: var(--button-enter);
         color: white;
-        width: 30%;
+        width: 25%;
         height: 30px;
+        margin-left: auto;
         border-radius: 0.3rem;
-        bottom: 0;
-        right: 0;
 
         // &:first-child {
         //     background-color: var(--des-red);
@@ -114,6 +114,7 @@
 .orderItem {
     background-color: var(--dark-900);
     margin-bottom: 1rem;
+    display: flex;
     align-items: center;
     border-radius: 0.3rem;
 
@@ -125,7 +126,7 @@
         height: 60px;
         align-items: center;
         display: flex;
-        width: 100%;
+        width: 90%;
     }
 
     span {
@@ -136,6 +137,20 @@
 
     &:hover {
         background-color: var(--dark-600);
+    }
+
+    .orderIcons {
+        height: 100%;
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    @media (max-width: 520px) {
+        .orderIcons {
+            gap: 4px;
+        }
     }
 }
 

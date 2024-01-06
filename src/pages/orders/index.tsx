@@ -136,12 +136,8 @@ export default function Order({orders, items}: HomeProps) {
                                     <div className={styles.tag}></div>
                                     <p>{order.client.name} - <span>{order.neighborhood}</span></p>
                                     <div className={styles.orderPatch}>
-                                        <span>Enviar</span>
                                     </div>
                                 </button>
-                                        <span onClick={() => handleDelete(order.id)}>Deletar</span>
-                                        <span onClick={() => handleSend(order.id)}>Enviar</span>
-                                        <span onClick={() => handleContinue(order.id)}>Continuar</span>
                             </section>
                         ))}
 
