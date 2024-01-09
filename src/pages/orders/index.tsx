@@ -1,13 +1,11 @@
 import { Header } from "@/components/Header"
 import styles from './styles.module.scss';
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { canSSRAuth } from "@/utils/canSSRAuth";
 import { setUpAPIClient } from "@/services/api";
-import { AuthContext } from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
 import Modal from 'react-modal';
 import {ModalOrder} from '@/components/ModalOrder';
-import Router from "next/router";
 
 export type OrderProps = {
     id: string;
@@ -76,18 +74,6 @@ export default function Order({orders, items}: HomeProps) {
         setModalVisible(false);
     }
 
-    async function handleContinue(order_id: string) {
-        const api = setUpAPIClient();
-
-        const order = await api.post('/get/order', {
-            id: order_id
-        });
-
-        Router.push('/dashboard/order');
-
-        return order
-    }
-
     async function handleSend(id: string) {
         const api = setUpAPIClient();
         
@@ -124,24 +110,25 @@ export default function Order({orders, items}: HomeProps) {
         <>
             <Header />
             <main className={styles.container}>
-                <h1>Pedidos</h1>
+            <h1>Pedidos Enviados</h1>
 
-                <article className={styles.listOrders}>
-                        {orderList.length === 0 && (
-                            <span className={styles.message}>Não existem pedidos...</span>
-                        )}
-                        {orderList.map((order) => (
-                            <section className={styles.orderItem} key={order.id}>
-                                <button  onClick={() => handleOpenModalView(order.id)}>
-                                    <div className={styles.tag}></div>
-                                    <p>{order.client.name} - <span>{order.neighborhood}</span></p>
-                                    <div className={styles.orderPatch}>
-                                    </div>
-                                </button>
-                            </section>
-                        ))}
+<article className={styles.listOrders}>
+                {orderList.length === 0 && (
+                    <span className={styles.message}>Não existem pedidos...</span>
+                )}
+                {orderList.map((order) => (
+                    <section className={styles.orderItem} key={order.id}>
+                        <button onClick={() => handleOpenModalView(order.id)}>
+                            <div className={styles.tag}></div>
+                            <p>{order.client.name} - <span>{order.neighborhood}</span></p>
+                            <div className={styles.orderPatch}>
+                                <span>Enviado</span>
+                            </div>
+                        </button>
+                    </section>
+                ))}
 
-                    </article>
+                </article>
             </main>
             { modalVisible && (
                 <ModalOrder
@@ -158,19 +145,14 @@ export default function Order({orders, items}: HomeProps) {
 export const getServerSideProps = canSSRAuth(async (ctx: any) => {
     const apiClient = setUpAPIClient(ctx);
         
-        const {data: detail} = await apiClient.get('/me/client');
-        const {data: order} = await apiClient.post('/order/client', {
+    const {data: detail} = await apiClient.get('/me/client');
+    const {data: order} = await apiClient.post('/orderclient/send', {
             client_id: detail.id
-        });
-        
-        console.log(order.id)
-        
-        const {data: lastOrder} = await apiClient.get('/order/item');
-
+    });
+    
     return {
         props: {
             orders: order,
-            items: lastOrder ? lastOrder : []
         }
     }
 })

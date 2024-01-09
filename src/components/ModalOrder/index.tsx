@@ -8,6 +8,7 @@ import formatCurrency from '@/utils/formatCurrency';
 import { useContext, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 import { FaTrash } from "react-icons/fa";
+import { useRouter } from 'next/router';
 
 
 interface ModalOrderProps {
@@ -24,6 +25,10 @@ export function ModalOrder({isOpen, onRequestClose, order, onDeleteOrder}: Modal
     const [orderList, setOrderList] = useState(order || []);
 
     const {user} = useContext(AuthContext);
+
+    const router = useRouter();
+    const param = router.pathname;
+
     const customStyles = {
         content: {
             top: '50%',
@@ -111,11 +116,15 @@ export function ModalOrder({isOpen, onRequestClose, order, onDeleteOrder}: Modal
                             </section>
                         ))}
                     </div>
-                    <div className={styles.footerModal}>
-                        <button className={styles.buttonOrder} onClick={() => onDeleteOrder(order[0].order_id)}>
-                            Deletar Pedido
-                        </button>
-                        <h2>Total: {formatCurrency(total)}</h2>
+                    <div className={styles.footerModal} style={param === '/orders'? {justifyContent: 'flex-end'} : {}}>
+                            <button
+                                className={styles.buttonOrder}
+                                onClick={() => onDeleteOrder(order[0].order_id)}
+                                style={param === '/orders'? {display: 'none'} : {}} 
+                            >
+                                Deletar Pedido
+                            </button>
+                            <h2>Total: {formatCurrency(total)}</h2>
                     </div>
                 </div>
         </Modal>

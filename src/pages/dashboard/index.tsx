@@ -3,7 +3,7 @@ import Head from 'next/head';
 import {Header} from '@/components/Header/index';
 import styles from './styles.module.scss';
 import { setUpAPIClient } from '@/services/api';
-import { FormEvent, useContext, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import formatCurrency from '@/utils/formatCurrency';
 import {Loading} from '../../components/loading';
@@ -42,10 +42,6 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
     const [categories, setCategories] = useState(categoryList || []);
     const [categorySelected, setCategorySelected] = useState(0);
     const [loading, setLoading] = useState(true);
-
-    const [neigh, setNeigh] = useState('');
-    const [adress, setAdress] = useState('');
-    const [number, setNumber] = useState('');
     const [amount, setAmount] = useState(1);
     
     const [orderList, setOrderList] = useState(orders || []);
@@ -96,65 +92,6 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
         });
     }
 
-    async function handleDecrement(event: FormEvent, id: string) {
-        event.preventDefault();
-        
-        if (amount === 0) {
-            return
-        }
-
-        const api = setUpAPIClient();
-        
-        const {data: lastOrder} = await api.get('/order/item');
-        if (!lastOrder) {
-            Router.push('/dashboard');
-            return toast.info("Crie seu pedido primeiro!");
-        }
-        const {data: res} = await api.post('/order/add', {
-            order_id: lastOrder.id,
-            product_id: id,
-            amount: amount - 1
-        });
-
-        setAmount(1)
-
-        console.log(res);
-    }
-
-    async function handleCreateOrder(event: FormEvent) {
-        event.preventDefault();
-
-        if (neigh === '' || adress === '' || number === '') {
-            toast.error("Digite todos os campos");
-            return;
-        }
-
-        toast.info("Adicione Itens");
-        const api = setUpAPIClient();
-
-        await api.post('/order', {
-            neighborhood: neigh,
-            adress,
-            house_number: number
-        });
-
-        Router.push('/dashboard/order');
-    }
-
-    async function handleSendOrder() {
-        const api = setUpAPIClient();
-
-        
-        const {data} = await api.get(('/order/item'));
-
-
-        await api.patch('/order/send', {
-            order_id: data.id
-        })
-
-        toast.success("Pedido Enviado!");
-    }
-
     // separator
 
     async function handleDelete(id: string) {
@@ -172,28 +109,25 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
         setModalVisible(false);
     }
 
-    async function handleContinue(order_id: string) {
-        const api = setUpAPIClient();
-
-        const order = await api.post('/get/order', {
-            id: order_id
-        });
-
-        Router.push('/dashboard/order');
-
-        return order
-    }
-
     async function handleSend(id: string) {
         const api = setUpAPIClient();
+        
+        const {data: orderDetail} = await api.get('/order/detail', {
+            params: {
+                order_id: id
+            }
+        });
+
+        if (orderDetail.length === 0) {
+            return toast.info('Adicione algum produto!');
+        }
         
         await api.patch('/order/send',{
                 order_id: id
         });
         
-        handleCloseModal();
         setOrderList((prevState) => prevState.filter((order) => order.id !== id));
-        toast.success('Pedido Enviado!')
+        toast.success('Pedido Enviado!');
     }
 
     async function handleOpenModalView(id: string) {
@@ -204,10 +138,9 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
                 order_id: id
             }
         });
-
+        
         setModalItem(data);
         setModalVisible(true);
-
     }
 
     
@@ -218,12 +151,13 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
         setModalFormVisible(true);
     }
 
-    function handleCloseModal() {
+    function handleCloseModalOrder() {
         setModalVisible(false);
+    }
+    
+    function handleCloseModalForm() {
         setModalFormVisible(false);
     }
-
-    Modal.setAppElement('#__next');
     return (
         <>
             <Head>
@@ -257,7 +191,7 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
                         { modalVisible && (
                             <ModalOrder
                             isOpen={modalVisible}
-                            onRequestClose={handleCloseModal}
+                            onRequestClose={handleCloseModalOrder}
                             order={modalItem}
                             onDeleteOrder={handleDelete}
                             />
@@ -265,8 +199,8 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
                         { modalFormVisible && (
                             <ModalForm
                             isOpen={modalFormVisible}
-                            setOpen={setModalFormVisible}
-                            onRequestClose={handleCloseModal}
+                            onRequestClose={handleCloseModalForm}
+                            onModalItem={setOrderList}
                             />
                         )}
                     </article>
@@ -293,13 +227,6 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
                             <h2>{product.name}</h2>
                             <p>{formatCurrency(parseFloat(product.price))}</p>
                             <form>
-                                {/* <input
-                                type="number"
-                                min={1}
-                                id={product.id}
-                                onChange={(event) => setAmount(Number(event.target.value))}
-                                /> */}
-                                {/* <button type="submit" onClick={orderList.length === 0 ? (event) => handleOpenModalFormView(event) : (event) => handleDecrement(event, product.id)}>-</button> */}
                                 <button type="submit" onClick={orderList.length === 0 ? (event) => handleOpenModalFormView(event) : (event) => handleAdd(event, product.id)}>+</button>
                             </form>
                         </div>
@@ -318,19 +245,14 @@ export const getServerSideProps = canSSRAuth(async (ctx: any) => {
 
     // separator
     const {data: detail} = await apiClient.get('/me/client');
-        const {data: order} = await apiClient.post('/order/client', {
-            client_id: detail.id
-        });
+    const {data: order} = await apiClient.post('/order/client', {
+        client_id: detail.id
+    });
         
-        console.log(order.id)
-        
-        const {data: lastOrder} = await apiClient.get('/order/item');
-
     return {
         props: {
             categoryList: response.data,
             orders: order,
-            items: lastOrder ? lastOrder : []
         }
     }
 })

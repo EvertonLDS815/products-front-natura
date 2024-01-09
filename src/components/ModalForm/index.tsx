@@ -5,13 +5,29 @@ import { FiX } from 'react-icons/fi';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import styles from './styles.module.scss';
+import { OrderProps } from '@/pages/orders';
 
+type OrderDashProps = {
+    id: string;
+    neighborhood: string;
+    adress: string;
+    house_number: string;
+    status: boolean;
+    draft: boolean;
+    client_id: string;
+    client: {
+        id: string;
+        name: string;
+        login: string;
+        password: string;
+    };
+}
 interface ModalFormProps {
     isOpen: boolean;
-    setOpen: (c: boolean) => void;
     onRequestClose: () => void;
+    onModalItem: (credentials: OrderProps[]) => void;
 }
-export function ModalForm({isOpen, setOpen, onRequestClose}: ModalFormProps) {
+export function ModalForm({isOpen, onRequestClose, onModalItem}: ModalFormProps) {
     const [neigh, setNeigh] = useState('');
     const [adress, setAdress] = useState('');
     const [number, setNumber] = useState('');
@@ -32,10 +48,13 @@ export function ModalForm({isOpen, setOpen, onRequestClose}: ModalFormProps) {
             house_number: number
         });
 
-        setOpen(false)
+        const {data: detail} = await api.get('/me/client');
+        const {data: order} = await api.post('/order/client', {
+            client_id: detail.id
+        });
 
-        location.reload();
-        
+        onModalItem(order);
+        onRequestClose();
     }
     
     const customStyles = {
