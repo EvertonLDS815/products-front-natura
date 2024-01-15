@@ -9,6 +9,7 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 import { FaTrash } from "react-icons/fa";
 import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 
 
 interface ModalOrderProps {
@@ -56,16 +57,12 @@ export function ModalOrder({isOpen, onRequestClose, order, onDeleteOrder}: Modal
                 item_id: id
             }
         });
-        
-
         setOrderList((prevState) => prevState.filter((order) => order.id !== id));
-
     }
     
     if (orderList.length === 0) {
-        onRequestClose();
+        onRequestClose()
     }
-
     return (
         <Modal
         isOpen={isOpen}
@@ -92,12 +89,13 @@ export function ModalOrder({isOpen, onRequestClose, order, onDeleteOrder}: Modal
                         </h3>
                         <span>{orderList.length} {orderList.length > 1 ? 'itens' : 'item'}</span>
                     </div>
+                    {param === '/orders' && 
                     <div className={styles.headModal}>
                         <span>
-                        {orderList[0]?.order.neighborhood}
+                        {orderList[0]?.order.adress}
                         </span>
                         <span>Nº {orderList[0]?.order.house_number}</span>
-                    </div>
+                    </div>}
                     <div className={orderList.length >= 4 ? styles.scrollY : styles.top}>
                         {orderList.map(item => (
                             <section key={item.id} className={styles.containerItem}>
@@ -112,11 +110,17 @@ export function ModalOrder({isOpen, onRequestClose, order, onDeleteOrder}: Modal
                                             <FaTrash size={18} color="#ef4646" />
                                         </button>
                                     )}
+                                    
                                 </div>
                             </section>
                         ))}
                     </div>
-                    <div className={styles.footerModal} style={param === '/orders'? {justifyContent: 'flex-end'} : {}}>
+                    <div className={styles.footerModal}>
+                            {param === '/orders' && 
+                            <span>
+                                Pagamento: {order[0].order.type_page}
+                            </span>
+                            }
                             <button
                                 className={styles.buttonOrder}
                                 onClick={() => onDeleteOrder(order[0].order_id)}

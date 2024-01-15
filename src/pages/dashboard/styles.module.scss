@@ -18,6 +18,26 @@
     font-size: 1rem;
 }
 
+.buttonCreate {
+    background: #00cc0055;
+    padding: 1rem;
+    color: var(--white);
+    border: none;
+    border-radius: 1rem;
+    font-size: 1.1rem;
+    position: fixed;
+    bottom: 3rem;
+    right: 2rem;
+
+    &:hover {
+        filter: brightness(1.1);
+    }
+
+    &:focus {
+        outline: 2px solid var(--gray);
+    }
+}
+
 .productContainer {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));

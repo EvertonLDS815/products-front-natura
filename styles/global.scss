@@ -43,7 +43,7 @@ button {
 body::-webkit-scrollbar {
     width: 8px;               /* width of the entire scrollbar */
 }
-  
+
 body::-webkit-scrollbar-track {
     position: fixed;        /* color of the tracking area */
 }
@@ -55,14 +55,18 @@ body::-webkit-scrollbar-thumb {
 body, input, textarea, select, button {
     font: 400 1rem sans-serif;
 }
+::selection {
+    background-color: var(--gray);
+    color: var(--black);
+}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
-    -webkit-appearance: none;
+    appearance: none;
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 input[type=number] {
-    -moz-appearance:textfield;
+    appearance:textfield;
 }

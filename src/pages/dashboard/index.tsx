@@ -3,7 +3,7 @@ import Head from 'next/head';
 import {Header} from '@/components/Header/index';
 import styles from './styles.module.scss';
 import { setUpAPIClient } from '@/services/api';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import formatCurrency from '@/utils/formatCurrency';
 import {Loading} from '../../components/loading';
@@ -15,6 +15,7 @@ import { ModalOrder } from '@/components/ModalOrder';
 import {ModalForm} from "@/components/ModalForm";
 import { IoMdSend } from "react-icons/io";
 import { FaTrash } from 'react-icons/fa';
+import { AuthContext } from '@/contexts/AuthContext';
 
 
 type ProductItemProps = {
@@ -48,7 +49,7 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalItem, setModalItem] = useState<ItemProps[]>([]);
     const [modalFormVisible, setModalFormVisible] = useState(false);
-    
+    const [orderId, setOrderId] = useState('')
     
     async function byCategory(id: string) {
         const apiClient = setUpAPIClient();
@@ -62,9 +63,11 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
             setLoading(false);
     }
     async function handleChangeCategory(event: any) {
+        setLoading(true);
         setCategorySelected(event.target.value)
         
         byCategory(categories[event.target.value].id)
+        setLoading(false);
     }
         // recarregando a page
     useEffect(() => {
@@ -73,6 +76,8 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
 
     async function handleAdd(event: FormEvent, id: string) {
         event.preventDefault();
+
+        // handleopenmodalview
         
         if (amount === 0) {
             return
@@ -82,10 +87,24 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
         
         const {data: lastOrder} = await api.get('/order/item');
         if (!lastOrder) {
-            Router.push('/dashboard');
-            return toast.info("Crie seu pedido primeiro!");
+            const response = await api.post('/order');
+            
+            const {data: last} = await api.get('/order/item');
+            await api.post('/order/add', {
+                order_id: last.id,
+                product_id: id,
+                amount
+            });
+
+            const {data: detail} = await api.get('/me/client');
+            const {data: order} = await api.post('/order/client', {
+                client_id: detail.id
+            });
+            setOrderList(order);
+            return;
+            // return toast.info("Crie seu pedido primeiro!");
         }
-        const {data: res} = await api.post('/order/add', {
+        await api.post('/order/add', {
             order_id: lastOrder.id,
             product_id: id,
             amount
@@ -109,27 +128,6 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
         setModalVisible(false);
     }
 
-    async function handleSend(id: string) {
-        const api = setUpAPIClient();
-        
-        const {data: orderDetail} = await api.get('/order/detail', {
-            params: {
-                order_id: id
-            }
-        });
-
-        if (orderDetail.length === 0) {
-            return toast.info('Adicione algum produto!');
-        }
-        
-        await api.patch('/order/send',{
-                order_id: id
-        });
-        
-        setOrderList((prevState) => prevState.filter((order) => order.id !== id));
-        toast.success('Pedido Enviado!');
-    }
-
     async function handleOpenModalView(id: string) {
         const apiClient = setUpAPIClient();
         
@@ -146,9 +144,10 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
     
     Modal.setAppElement('#__next');
 
-    async function handleOpenModalFormView(event: FormEvent) {
+    async function handleOpenModalFormView(event: FormEvent, id: string) {
         event.preventDefault();
         setModalFormVisible(true);
+        setOrderId(id)
     }
 
     function handleCloseModalOrder() {
@@ -158,6 +157,8 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
     function handleCloseModalForm() {
         setModalFormVisible(false);
     }
+
+    const {user} = useContext(AuthContext);
     return (
         <>
             <Head>
@@ -169,23 +170,24 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
             <h1>Produtos</h1>
 
             <div>
-                <article className={styles.listOrders}>
-                        {orderList.length === 0 && (
-                            <span className={styles.message}>Não existem pedidos...</span>
-                        )}
+                {orderList.length > 0 && 
+                    <article className={styles.listOrders}>
                         {orderList.map((order) => (
-                            <section className={styles.orderItem} key={order.id}>
-                                <button onClick={() => handleOpenModalView(order.id)}>
-                                    <div className={styles.tag}></div>
-                                    <p>{order.client.name} - <span>{order.neighborhood}</span></p>
-                                    <div className={styles.orderPatch}>
+                            <div key={order.id}>
+                                <section className={styles.orderItem}>
+                                    <button onClick={() => handleOpenModalView(order.id)}>
+                                        <div className={styles.tag}></div>
+                                        <p><span>{user?.name}</span></p>
+                                        <div className={styles.orderPatch}>
+                                        </div>
+                                    </button>
+                                    <div className={styles.orderIcons}>
+                                        <span onClick={() => handleDelete(order.id)}><FaTrash color="#fc4747" size={22} /></span>
+                                        <span onClick={(event) => handleOpenModalFormView(event, order.id)}><IoMdSend size={26} color="#02a953" /></span>
                                     </div>
-                                </button>
-                                <div className={styles.orderIcons}>
-                                    <span onClick={() => handleDelete(order.id)}><FaTrash color="#fc4747" size={22} /></span>
-                                    <span onClick={() => handleSend(order.id)}><IoMdSend size={26} color="#02a953" /></span>
-                                </div>
-                            </section>
+                                </section>
+                                <button className={styles.buttonCreate} onClick={() => handleOpenModalView(order.id)}>Ver Pedido</button>
+                            </div>
                         ))}
 
                         { modalVisible && (
@@ -200,10 +202,13 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
                             <ModalForm
                             isOpen={modalFormVisible}
                             onRequestClose={handleCloseModalForm}
+                            modalItem={orderList}
                             onModalItem={setOrderList}
+                            modalId={orderId}
                             />
                         )}
                     </article>
+                    }
                 </div>
 
             <select className={styles.select} value={categorySelected} onChange={handleChangeCategory}>
@@ -227,7 +232,7 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
                             <h2>{product.name}</h2>
                             <p>{formatCurrency(parseFloat(product.price))}</p>
                             <form>
-                                <button type="submit" onClick={orderList.length === 0 ? (event) => handleOpenModalFormView(event) : (event) => handleAdd(event, product.id)}>+</button>
+                                <button type="submit" onClick={(event) => handleAdd(event, product.id)}>+</button>
                             </form>
                         </div>
                     </div>

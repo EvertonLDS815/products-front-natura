@@ -33,6 +33,7 @@ export type ItemProps = {
 		house_number: string;
 		status: boolean;
 		draft: boolean;
+        type_page: string;
 		client_id: string;
         client: {
             id: string;

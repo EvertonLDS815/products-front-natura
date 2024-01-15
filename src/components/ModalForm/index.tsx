@@ -6,6 +6,7 @@ import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import styles from './styles.module.scss';
 import { OrderProps } from '@/pages/orders';
+import { ModalOrder } from '../ModalOrder';
 
 type OrderDashProps = {
     id: string;
@@ -25,37 +26,57 @@ type OrderDashProps = {
 interface ModalFormProps {
     isOpen: boolean;
     onRequestClose: () => void;
+    modalItem: OrderProps[];
     onModalItem: (credentials: OrderProps[]) => void;
+    modalId: string
 }
-export function ModalForm({isOpen, onRequestClose, onModalItem}: ModalFormProps) {
+export function ModalForm({isOpen, onRequestClose, modalItem, onModalItem, modalId}: ModalFormProps) {
     const [neigh, setNeigh] = useState('');
     const [adress, setAdress] = useState('');
     const [number, setNumber] = useState('');
+    const [typePage, setTypePage] = useState('À Vista');
 
-    async function handleCreateOrder(event: FormEvent) {
+    async function handleSend(event: FormEvent, id: string) {
         event.preventDefault();
 
-        if (neigh === '' || adress === '' || number === '') {
-            toast.error("Digite todos os campos!");
-            return;
+        try {
+            const api = setUpAPIClient();
+            const {data: orderDetail} = await api.get('/order/detail', {
+                params: {
+                    order_id: id
+                }
+            });
+
+            if (neigh === '' || adress === '' || number === '' || typePage === '') {
+                toast.error('Preencha todos os campos!')
+                return;
+            }
+            
+            const {data} = await api.patch('/order/send', {
+                    neighborhood: neigh,
+                    adress,
+                    house_number: number,
+                    type_page: typePage,
+                    order_id: id
+            });
+
+            onRequestClose();
+            
+            if (data.length === 0) {
+                toast.info('Adicione um item ao carrinho!')
+                return
+            }
+            toast.success('Pedido Enviado!')
+            onModalItem([])
+
+        } catch (err: any) {
+            console.log(err)
+            toast.error('Deu erro')
         }
         
-        const api = setUpAPIClient();
-
-        await api.post('/order', {
-            neighborhood: neigh,
-            adress,
-            house_number: number
-        });
-
-        const {data: detail} = await api.get('/me/client');
-        const {data: order} = await api.post('/order/client', {
-            client_id: detail.id
-        });
-
-        onModalItem(order);
-        onRequestClose();
+        
     }
+
     
     const customStyles = {
         content: {
@@ -88,7 +109,7 @@ export function ModalForm({isOpen, onRequestClose, onModalItem}: ModalFormProps)
                 <FiX size={32} color="#fc4747" />
 
             </button>
-            <form className={styles.formOrder} onSubmit={handleCreateOrder}>
+            <form className={styles.formOrder} onSubmit={(event) => handleSend(event, modalId)}>
                     <h1>Cadastro do pedido</h1>
                     <label>Bairro:</label>
                     <input
@@ -102,7 +123,7 @@ export function ModalForm({isOpen, onRequestClose, onModalItem}: ModalFormProps)
                             <input
                                 value={adress}
                                 onChange={(event) => setAdress(event.target.value)}
-                                placeholder="Manoel gonçalves" />
+                                placeholder="Manoel Gonçalves" />
                             
                         </div>
                         <div>
@@ -115,7 +136,13 @@ export function ModalForm({isOpen, onRequestClose, onModalItem}: ModalFormProps)
                                 placeholder="22" />
                         </div>
                     </section>
-                    <button type="submit">Criar pedido</button>
+                    <label>Pagamento:</label>
+                    <select value={typePage} onChange={(event) => setTypePage(event.target.value)}>
+                        <option>À Vista</option>
+                        <option>No Cartão</option>
+                    </select>
+                    <button type="submit">Enviar pedido</button>
+                    {/* <span onClick={() => handleSend()}><IoMdSend size={26} color="#02a953" /></span> */}
                 </form>
         </Modal>
     )
