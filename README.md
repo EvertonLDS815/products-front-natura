@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# PerfumeShop Online
 
-First, run the development server:
+Bem-vindo ao PerfumeShop Online, uma plataforma de comércio eletrônico especializada na venda de produtos de perfumaria, cremes, shampoos e desodorantes. Proporcionamos aos clientes uma experiência de compra segura e conveniente, oferecendo uma ampla variedade de produtos de alta qualidade.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Recursos Principais
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Autenticação Segura:** Crie uma conta personalizada para uma experiência de compra segura e confiável.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Catálogo Diversificado:** Explore nossa extensa gama de produtos renomados de perfumaria e cuidados pessoais.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Facilidade de Navegação:** Interface intuitiva para uma navegação eficiente e agradável.
 
-## Learn More
+- **Área do Cliente:** Acesse seu histórico de compras, rastreie pedidos e repita compras anteriores.
 
-To learn more about Next.js, take a look at the following resources:
+- **Área de Administração:** Gerencie pedidos, produtos e clientes de forma eficiente.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Benefícios
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+**Para Clientes:**
+- Compra conveniente e segura.
+- Acesso rápido ao histórico de compras.
 
-## Deploy on Vercel
+**Para Administração:**
+- Controle eficiente sobre pedidos e informações dos clientes.
+- Gestão fácil de estoque e catálogo de produtos.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Autor
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Everton Lino - evertonlino1234@gmail.com
+
+## Tecnologias
+
+Nesse projeto usamos algumas tecnologias mais usadas do mercado.
+
+
+- React [products-front-natura](https://github.com/EvertonLDS815/products-front-natura).
+- Node [products-pri-natura](https://github.com/EvertonLDS815/products-pri-natura).
+- PostgreSQL (Banco de dados)
+- Prisma (ORM)
+
+## Licença
+
+Este projeto é licenciado sob a [EL Tutoriais](https://my-port-el.netlify.app/).
+## Autores
+
+- [@EvertonLDS815](https://www.github.com/EvertonLDS815)
+
+## Documentação de cores
+
+| Cor               | Hexadecimal                                                |
+| ----------------- | ---------------------------------------------------------------- |
+| --background-body       | ![#402f3a](https://via.placeholder.com/10/402f3a?text=+) #402f3a |
+| --dark-900     | ![#2d232a](https://via.placeholder.com/10/2d232a?text=+) #2d232a |
+| --dark-600       | ![#493643](https://via.placeholder.com/10/493643?text=+) #493643 |
+| --white       | ![#ffffff](https://via.placeholder.com/10/ffffff?text=+) #ffffff |
+| --gray       | ![#bbbbbb](https://via.placeholder.com/10/bbbbbb?text=+) #bbbbbb |
+| --primary-light       | ![#60ffc3](https://via.placeholder.com/10/60ffc3?text=+) #60ffc3 |
+| --button-enter       | ![#02a953](https://via.placeholder.com/10/02a953?text=+) #02a953 |
+| --des-red       | ![#b93535](https://via.placeholder.com/10/b93535?text=+) #b93535 |
+| --des-red-light       | ![#fc4747](https://via.placeholder.com/10/fc4747?text=+) #fc4747 |
