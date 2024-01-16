@@ -111,6 +111,11 @@ export function ModalForm({isOpen, onRequestClose, modalItem, onModalItem, modal
             </button>
             <form className={styles.formOrder} onSubmit={(event) => handleSend(event, modalId)}>
                     <h1>Cadastro do pedido</h1>
+                    <label>Pagamento:</label>
+                    <select value={typePage} onChange={(event) => setTypePage(event.target.value)}>
+                        <option>À Vista</option>
+                        <option>No Cartão</option>
+                    </select>
                     <label>Bairro:</label>
                     <input
                         value={neigh}
@@ -136,13 +141,7 @@ export function ModalForm({isOpen, onRequestClose, modalItem, onModalItem, modal
                                 placeholder="22" />
                         </div>
                     </section>
-                    <label>Pagamento:</label>
-                    <select value={typePage} onChange={(event) => setTypePage(event.target.value)}>
-                        <option>À Vista</option>
-                        <option>No Cartão</option>
-                    </select>
                     <button type="submit">Enviar pedido</button>
-                    {/* <span onClick={() => handleSend()}><IoMdSend size={26} color="#02a953" /></span> */}
                 </form>
         </Modal>
     )
