@@ -47,30 +47,32 @@ export default function Home() {
       <Head>
         <title>Natura - Login</title>
       </Head>
+      <main className={styles.container}>
 
-      <div className={styles.containerCenter}>
-        <Image src={Logo} alt="logo do site" />
+        <div className={styles.containerCenter}>
+          <Image src={Logo} alt="logo do site" />
 
-        <div className={styles.login}>
-          <form onSubmit={handleLogin}>
-            <Input 
-              type="text" 
-              placeholder={'Digite seu email...'} 
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
-            />
-            <Input 
-              type="password" 
-              placeholder={'Digite sua senha...'} 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}/>
-            <Button 
-              type="submit"
-              loading={loading}
-            >Acessar</Button>
-          </form>
+          <div className={styles.login}>
+            <form onSubmit={handleLogin}>
+              <Input 
+                type="text" 
+                placeholder={'Digite seu email...'} 
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
+                />
+              <Input 
+                type="password" 
+                placeholder={'Digite sua senha...'} 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}/>
+              <Button 
+                type="submit"
+                loading={loading}
+                >Acessar</Button>
+            </form>
+          </div>
         </div>
-      </div>
+      </main>
     </>
   )
 }
