@@ -6,6 +6,7 @@ import { setUpAPIClient } from "@/services/api";
 import { toast } from "react-toastify";
 import Modal from 'react-modal';
 import {ModalOrder} from '@/components/ModalOrder';
+import Head from "next/head";
 
 export type OrderProps = {
     id: string;
@@ -109,6 +110,9 @@ export default function Order({orders, items}: HomeProps) {
     Modal.setAppElement('#__next');
     return (
         <>
+            <Head>
+                <title>Painel - Pedidos Enviados</title>
+            </Head>
             <Header />
             <main className={styles.container}>
             <h1>Pedidos Enviados</h1>
