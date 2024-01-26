@@ -27,7 +27,8 @@ Bem-vindo ao PerfumeShop Online, uma plataforma de comércio eletrônico especia
 
 ## Autor
 
-Everton Lino - evertonlino1234@gmail.com
+- Everton Lino - evertonlino1234@gmail.com
+- Github [@EvertonLDS815](https://www.github.com/EvertonLDS815)
 
 ## Tecnologias
 
@@ -42,9 +43,6 @@ Nesse projeto usamos algumas tecnologias mais usadas do mercado.
 ## Licença
 
 Este projeto é licenciado sob a [EL Tutoriais](https://my-port-el.netlify.app/).
-## Autores
-
-- [@EvertonLDS815](https://www.github.com/EvertonLDS815)
 
 ## Documentação de cores
 
