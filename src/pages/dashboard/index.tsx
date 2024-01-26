@@ -151,7 +151,9 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
     }
 
     function handleCloseModalOrder() {
-        setModalVisible(false);
+        setTimeout(() => {
+            setModalVisible(false);
+        }, 0);
     }
     
     function handleCloseModalForm() {
@@ -177,7 +179,7 @@ export default function Dashboard({categoryList, orders}: CategoryProps) {
                                 <section className={styles.orderItem}>
                                     <button onClick={() => handleOpenModalView(order.id)}>
                                         <div className={styles.tag}></div>
-                                        <p><span>{user?.name}</span></p>
+                                        <p><span>{orders[0].client.name}</span></p>
                                         <div className={styles.orderPatch}>
                                         </div>
                                     </button>
